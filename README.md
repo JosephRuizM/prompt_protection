@@ -1,19 +1,63 @@
-# 🛡️ Prompt Protection Firewall
+# 🛡️ AI Firewall for Large Language Models
 
-> **A high-performance, hybrid security middleware (FastAPI + C++) engineered to intercept, analyze, and mitigate Prompt Injection attacks in real-time using vector embeddings and semantic similarity filtering.**
+## Executive Summary
+
+Prompt Injection has emerged as one of the primary security threats affecting modern Large Language Model (LLM) applications.
+
+This project presents a hybrid security middleware that performs semantic threat detection before model inference, allowing organizations to reduce operational costs while protecting downstream AI systems against known Prompt Injection attacks.
+
+The architecture combines FastAPI, native C++, ChromaDB and HNSW indexing to provide sub-millisecond detection with minimal resource consumption.
 
 ---
 
 ## 📌 Project Overview
 
-This project implements an enterprise-grade security perimetral layer designed to safeguard Large Language Models (LLMs) from malicious prompt injections before they reach the inference phase. 
+User
 
-The core architecture operates as a high-speed hybrid pipeline:
-1. **Ingestion & Vectorization:** Incoming user prompts are intercepted by a **FastAPI** gateway and vectorized into low-dimensional embeddings.
-2. **Low-Level Analysis (C++ Engine):** The vectors are processed by a dedicated **C++ engine** that performs high-speed **Cosine Similarity** lookups against a persistent database of known attack signatures powered by **ChromaDB** (utilizing Hierarchical Navigable Small World - HNSW graphs).
-3. **Threshold-Based Mitigation:** If the semantic similarity scores **above the 85% threshold**, the C++ engine immediately triggers a low-latency alert back to Python to deny the prompt, effectively blocking the threat. Otherwise, legitimate queries are seamlessly routed to the LLM.
+↓
 
----
+FastAPI Gateway
+
+↓
+
+Embedding Generator
+
+↓
+
+HNSW Index
+
+↓
+
+Native C++ Similarity Engine
+
+↓
+
+Decision Layer
+
+↓
+
+Allow / Block
+
+↓
+
+LLM
+
+
+
+### Why C++?
+
+Although cosine similarity can be implemented directly in Python using NumPy, migrating the computation to native C++ significantly reduced execution latency while eliminating Python interpreter overhead during repeated vector operations.
+
+### Why HNSW instead of brute-force search?
+
+A brute-force similarity search scales linearly with dataset size.
+
+HNSW offers logarithmic approximate nearest-neighbor retrieval while maintaining high recall, making it more appropriate for real-time AI security systems.
+
+### Why ChromaDB?
+
+ChromaDB provides lightweight persistent vector storage and HNSW indexing without requiring external infrastructure such as Milvus or Pinecone.
+
 
 ## 📊 Technical Audit & Quantifiable Metrics
 
